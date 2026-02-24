@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VANTX — Inteligência que Vende</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #111111;
+    --surface2: #161616;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00ff87;
+    --accent2: #00c9ff;
+    --accent3: #ff3d6b;
+    --text: #f0f0f0;
+    --muted: #888;
+    --gold: #f5c842;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 5%;
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--accent);
+    color: #000 !important;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem !important;
+    transition: opacity 0.2s, transform 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 5% 80px;
+    overflow: hidden;
+  }
+
+  /* ANIMATED BACKGROUND GRID */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
+  /* GLOW ORBS */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: rgba(0,255,135,0.08);
+    top: -100px; left: -100px;
+    animation: floatOrb 12s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: rgba(0,201,255,0.06);
+    bottom: -50px; right: -50px;
+    animation: floatOrb 15s ease-in-out infinite reverse;
+  }
+  .orb-3 {
+    width: 300px; height: 300px;
+    background: rgba(255,61,107,0.05);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: floatOrb 10s ease-in-out infinite 2s;
+  }
+
+  @keyframes floatOrb {
+    0%, 100% { transform: translate(0,0); }
+    33% { transform: translate(30px, -20px); }
+    66% { transform: translate(-20px, 30px); }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,255,135,0.08);
+    border: 1px solid rgba(0,255,135,0.25);
+    color: var(--accent);
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    line-height: 1.08;
+    letter-spacing: -2px;
+    max-width: 900px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted);
+    max-width: 600px;
+    margin-bottom: 40px;
+    font-weight: 300;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(0,255,135,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 50px rgba(0,255,135,0.5);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.95rem;
+    padding: 16px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn-secondary:hover {
+    background: var(--surface);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  /* SOCIAL PROOF ROW */
+  .social-proof {
+    margin-top: 56px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+
+  .proof-avatars {
+    display: flex;
+  }
+  .proof-avatars span {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    background: linear-gradient(135deg, #1a1a1a, #333);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: -10px;
+  }
+  .proof-avatars span:first-child { margin-left: 0; }
+  .proof-avatars span:nth-child(1) { background: linear-gradient(135deg, #ff6b9d, #c44dff); }
+  .proof-avatars span:nth-child(2) { background: linear-gradient(135deg, #00c9ff, #0052ff); }
+  .proof-avatars span:nth-child(3) { background: linear-gradient(135deg, #00ff87, #00c9ff); }
+  .proof-avatars span:nth-child(4) { background: linear-gradient(135deg, #f5c842, #ff6b35); }
+  .proof-avatars span:nth-child(5) { background: linear-gradient(135deg, #ff3d6b, #ff6b35); }
+
+  .proof-text {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .proof-text strong { color: var(--text); }
+
+  .stars { color: var(--gold); letter-spacing: 2px; }
+
+  /* ── TICKER ── */
+  .ticker {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
+  .ticker::before, .ticker::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 100px;
+    z-index: 2;
+  }
+  .ticker::before { left: 0; background: linear-gradient(90deg, var(--surface), transparent); }
+  .ticker::after { right: 0; background: linear-gradient(-90deg, var(--surface), transparent); }
+
+  .ticker-track {
+    display: inline-flex;
+    gap: 0;
+    animation: ticker 25s linear infinite;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 32px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .ticker-item .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  .ticker-item strong { color: var(--accent); }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5%;
+  }
+
+  .section-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 560px;
+    font-weight: 300;
+  }
+
+  /* ── PAIN SECTION ── */
+  .pain {
+    padding: 100px 0;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    margin-top: 60px;
+  }
+
+  .pain-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .pain-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px 24px;
+    background: rgba(255,61,107,0.04);
+    border: 1px solid rgba(255,61,107,0.12);
+    border-radius: 12px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .pain-item:hover {
+    transform: translateX(6px);
+    border-color: rgba(255,61,107,0.3);
+  }
+
+  .pain-icon {
+    width: 40px; height: 40px;
+    min-width: 40px;
+    background: rgba(255,61,107,0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+
+  .pain-item h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+  .pain-item p { font-size: 0.85rem; color: var(--muted); }
+
+  .pain-vs {
+    text-align: center;
+  }
+
+  .vs-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vs-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,255,135,0.03), transparent);
+    pointer-events: none;
+  }
+
+  .vs-stat {
+    margin-bottom: 28px;
+  }
+  .vs-stat:last-child { margin-bottom: 0; }
+
+  .vs-number {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    letter-spacing: -2px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .vs-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+  .vs-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    padding: 100px 0;
+    background: var(--surface);
+  }
+
+  .how-header { text-align: center; margin-bottom: 72px; }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .step {
+    background: var(--surface2);
+    padding: 48px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .step:hover { background: #1c1c1c; }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .step:hover::before { transform: scaleX(1); }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 4rem;
+    letter-spacing: -3px;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .step-icon {
+    width: 52px; height: 52px;
+    background: rgba(0,255,135,0.08);
+    border: 1px solid rgba(0,255,135,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .step:hover .step-icon {
+    background: rgba(0,255,135,0.15);
+    border-color: rgba(0,255,135,0.4);
+  }
+
+  .step h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 12px;
+  }
+  .step p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+
+  .step-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .step-tag {
+    background: rgba(0,201,255,0.08);
+    border: 1px solid rgba(0,201,255,0.2);
+    color: var(--accent2);
+    font-size: 0.73rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── FEATURES BENTO ── */
+  .features {
+    padding: 100px 0;
+    background: var(--bg);
+  }
+
+  .features-header { text-align: center; margin-bottom: 60px; }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 12px;
+  }
+
+  .bento-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .bento-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .bento-card.col-8 { grid-column: span 8; }
+  .bento-card.col-4 { grid-column: span 4; }
+  .bento-card.col-6 { grid-column: span 6; }
+  .bento-card.col-5 { grid-column: span 5; }
+  .bento-card.col-7 { grid-column: span 7; }
+
+  .bento-card.accent-green {
+    background: rgba(0,255,135,0.04);
+    border-color: rgba(0,255,135,0.15);
+  }
+  .bento-card.accent-blue {
+    background: rgba(0,201,255,0.04);
+    border-color: rgba(0,201,255,0.15);
+  }
+  .bento-card.accent-red {
+    background: rgba(255,61,107,0.04);
+    border-color: rgba(255,61,107,0.12);
+  }
+
+  .bento-emoji {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .bento-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .bento-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* Mock UI inside bento */
+  .mock-feed {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mock-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    gap: 12px;
+  }
+
+  .mock-thumb {
+    width: 32px; height: 44px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #222, #333);
+    min-width: 32px;
+  }
+  .mock-thumb.t1 { background: linear-gradient(135deg, #1a3a2a, #0a4a2a); }
+  .mock-thumb.t2 { background: linear-gradient(135deg, #2a1a3a, #1a0a4a); }
+  .mock-thumb.t3 { background: linear-gradient(135deg, #3a2a1a, #4a1a0a); }
+
+  .mock-info { flex: 1; }
+  .mock-title { font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .mock-views { color: var(--muted); font-size: 0.75rem; }
+
+  .mock-earn {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  /* Transcription mock */
+  .mock-transcript {
+    margin-top: 20px;
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 0.8rem;
+    line-height: 1.7;
+  }
+  .transcript-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+  .transcript-text { color: #aaa; }
+  .transcript-text mark {
+    background: rgba(0,255,135,0.15);
+    color: var(--accent);
+    border-radius: 3px;
+    padding: 0 3px;
+  }
+
+  /* Big number */
+  .bento-big-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3.5rem;
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials {
+    padding: 100px 0;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .testimonials-header { text-align: center; margin-bottom: 56px; }
+
+  .testi-scroll {
+    display: flex;
+    gap: 16px;
+    animation: scrollLeft 30s linear infinite;
+    width: max-content;
+  }
+  .testi-scroll:hover { animation-play-state: paused; }
+
+  .testi-track {
+    overflow: hidden;
+  }
+
+  .testi-card {
+    width: 320px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    flex-shrink: 0;
+  }
+
+  .testi-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .testi-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .testi-name { font-weight: 600; font-size: 0.9rem; }
+  .testi-handle { color: var(--muted); font-size: 0.78rem; }
+
+  .testi-earn {
+    background: rgba(0,255,135,0.08);
+    border: 1px solid rgba(0,255,135,0.2);
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+
+  .testi-text { font-size: 0.88rem; color: #bbb; line-height: 1.6; }
+
+  @keyframes scrollLeft {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── PRICING ── */
+  .pricing {
+    padding: 100px 0;
+    background: var(--bg);
+  }
+
+  .pricing-header { text-align: center; margin-bottom: 16px; }
+
+  .pricing-sub {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 56px;
+    font-size: 0.95rem;
+  }
+
+  .pricing-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .toggle-label {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .toggle-label.active { color: var(--text); }
+
+  .toggle-switch {
+    width: 52px; height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-switch.annual { background: rgba(0,255,135,0.2); border-color: rgba(0,255,135,0.4); }
+
+  .toggle-knob {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    background: var(--muted);
+    border-radius: 50%;
+    transition: transform 0.3s, background 0.2s;
+  }
+  .toggle-switch.annual .toggle-knob {
+    transform: translateX(24px);
+    background: var(--accent);
+  }
+
+  .save-badge {
+    background: rgba(0,255,135,0.12);
+    color: var(--accent);
+    font-size: 0.73rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid rgba(0,255,135,0.25);
+  }
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    align-items: end;
+  }
+
+  .plan-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    position: relative;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .plan-card:hover { transform: translateY(-6px); }
+
+  .plan-card.featured {
+    background: var(--surface2);
+    border-color: rgba(0,255,135,0.4);
+    transform: scale(1.04);
+  }
+  .plan-card.featured:hover { transform: scale(1.04) translateY(-6px); }
+
+  .plan-popular {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 18px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .plan-currency { font-size: 1.1rem; color: var(--muted); font-weight: 500; margin-top: 6px; }
+
+  .plan-amount {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3.2rem;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  .plan-period { font-size: 0.85rem; color: var(--muted); }
+
+  .plan-original {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: line-through;
+    margin-bottom: 4px;
+  }
+
+  .plan-note { font-size: 0.78rem; color: var(--muted); margin-bottom: 28px; }
+
+  .plan-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  .plan-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .plan-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #ccc;
+  }
+
+  .plan-features li::before {
+    content: '✓';
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .plan-features li.disabled {
+    color: var(--muted);
+    opacity: 0.5;
+  }
+  .plan-features li.disabled::before { content: '×'; color: var(--muted); }
+
+  .plan-cta {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+  }
+
+  .plan-cta.outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .plan-cta.outline:hover {
+    background: var(--surface2);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .plan-cta.solid {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 30px rgba(0,255,135,0.3);
+  }
+  .plan-cta.solid:hover {
+    box-shadow: 0 0 50px rgba(0,255,135,0.5);
+    transform: translateY(-1px);
+  }
+
+  .guarantee {
+    text-align: center;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .guarantee-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .guarantee-badge span:first-child { font-size: 1.2rem; }
+
+  /* ── FAQ ── */
+  .faq {
+    padding: 100px 0;
+    background: var(--surface);
+  }
+
+  .faq-header { text-align: center; margin-bottom: 60px; }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .faq-question {
+    padding: 20px 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .faq-question:hover { background: rgba(255,255,255,0.03); }
+
+  .faq-icon {
+    width: 24px; height: 24px;
+    min-width: 24px;
+    background: rgba(0,255,135,0.08);
+    border: 1px solid rgba(0,255,135,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: var(--accent);
+    transition: transform 0.3s;
+    font-weight: 700;
+  }
+
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    font-size: 0.87rem;
+    color: var(--muted);
+    line-height: 1.65;
+    padding: 0 24px;
+  }
+
+  .faq-item.open .faq-answer {
+    max-height: 200px;
+    padding: 0 24px 20px;
+  }
+
+  /* ── FINAL CTA ── */
+  .final-cta {
+    padding: 120px 0;
+    text-align: center;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .final-cta::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(ellipse, rgba(0,255,135,0.06) 0%, transparent 70%);
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .final-cta h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 4rem);
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .final-cta p {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  footer .nav-logo { font-size: 1.2rem; }
+  footer p { font-size: 0.8rem; color: var(--muted); }
+
+  footer .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+  footer .footer-links a {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  footer .footer-links a:hover { color: var(--text); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .pain-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .bento-card.col-8, .bento-card.col-4, .bento-card.col-6,
+    .bento-card.col-5, .bento-card.col-7 { grid-column: span 12; }
+    .plans { grid-template-columns: 1fr; }
+    .plan-card.featured { transform: none; }
+    .plan-card.featured:hover { transform: translateY(-6px); }
+    .faq-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  /* PRICE TOGGLE JS HOOK */
+  .price-monthly, .price-annual { display: none; }
+  .price-monthly.show, .price-annual.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">VAN<span>TX</span></div>
+  <ul class="nav-links">
+    <li><a href="#como-funciona">Como Funciona</a></li>
+    <li><a href="#features">Funcionalidades</a></li>
+    <li><a href="#planos">Planos</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#planos" class="nav-cta">Começar Agora →</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-badge">🔥 +1.280 creators ativos vendendo agora</div>
+
+  <h1>
+    Descubra os vídeos que<br>
+    estão <em>vendendo hoje</em><br>
+    no TikTok Shop.
+  </h1>
+
+  <p>
+    Inteligência em tempo real para creators e afiliados. Veja quais vídeos faturam, copie a estrutura que funciona e venda antes da concorrência.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#planos" class="btn-primary">
+      ⚡ Ver o que está vendendo agora
+    </a>
+    <a href="#como-funciona" class="btn-secondary">
+      Como funciona →
+    </a>
+  </div>
+
+  <div class="social-proof">
+    <div class="proof-avatars">
+      <span>LC</span><span>ML</span><span>AC</span><span>PB</span><span>IS</span>
+    </div>
+    <div>
+      <div class="stars">★★★★★</div>
+      <div class="proof-text"><strong>+1.280 criadoras</strong> gerando comissões com a VANTX</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker">
+  <div class="ticker-track" id="ticker">
+    <span class="ticker-item"><span class="dot"></span> Ana faturou <strong>R$9.200</strong> em 7 dias</span>
+    <span class="ticker-item"><span class="dot"></span> Vídeo de skincare: <strong>3M de views</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Produto mais vendido hoje: <strong>Sérum Vitamina C</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Maria Luiza: <strong>R$2.000</strong> no primeiro mês</span>
+    <span class="ticker-item"><span class="dot"></span> Novo campeão detectado: <strong>EUA — Suplementos</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Adriano: <strong>R$15.000</strong> em menos de 30 dias</span>
+    <span class="ticker-item"><span class="dot"></span> 4.200+ vídeos analisados <strong>hoje</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Paolla: <strong>Live recorde</strong> usando insights VANTX</span>
+    <span class="ticker-item"><span class="dot"></span> Ana faturou <strong>R$9.200</strong> em 7 dias</span>
+    <span class="ticker-item"><span class="dot"></span> Vídeo de skincare: <strong>3M de views</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Produto mais vendido hoje: <strong>Sérum Vitamina C</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Maria Luiza: <strong>R$2.000</strong> no primeiro mês</span>
+    <span class="ticker-item"><span class="dot"></span> Novo campeão detectado: <strong>EUA — Suplementos</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Adriano: <strong>R$15.000</strong> em menos de 30 dias</span>
+    <span class="ticker-item"><span class="dot"></span> 4.200+ vídeos analisados <strong>hoje</strong></span>
+    <span class="ticker-item"><span class="dot"></span> Paolla: <strong>Live recorde</strong> usando insights VANTX</span>
+  </div>
+</div>
+
+<!-- ── PAIN ── -->
+<section class="pain">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-label">O problema</span>
+      <h2 class="section-title">Você posta, espera e… nada.</h2>
+      <p class="section-sub">Enquanto você tenta adivinhar o que funciona, outros creators já sabem — e faturam.</p>
+    </div>
+
+    <div class="pain-grid reveal">
+      <div class="pain-list">
+        <div class="pain-item">
+          <div class="pain-icon">📉</div>
+          <div>
+            <h4>Menos de 1.000 visualizações</h4>
+            <p>Vídeo após vídeo sem alcance, sem engajamento, sem vendas.</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">🎲</div>
+          <div>
+            <h4>Produto escolhido no chute</h4>
+            <p>Sem dados de demanda real, você aposta e perde tempo e dinheiro.</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">⏳</div>
+          <div>
+            <h4>Meses tentando descobrir</h4>
+            <p>A curva de aprendizado sem informação privilegiada é longa e cara.</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">🤖</div>
+          <div>
+            <h4>Vídeos de IA que flopam</h4>
+            <p>Criar conteúdo sem modelar o que já vende é trabalho perdido.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="vs-card">
+        <div class="vs-stat">
+          <div class="vs-number">87%</div>
+          <div class="vs-label">dos creators nunca passam de 1K views no TikTok Shop</div>
+        </div>
+        <div class="vs-divider"></div>
+        <div class="vs-stat">
+          <div class="vs-number">3×</div>
+          <div class="vs-label">mais rápido vender modelando criativos validados vs criar do zero</div>
+        </div>
+        <div class="vs-divider"></div>
+        <div class="vs-stat">
+          <div class="vs-number">R$0</div>
+          <div class="vs-label">de custo para copiar uma estrutura que já está vendendo hoje</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how" id="como-funciona">
+  <div class="container">
+    <div class="how-header reveal">
+      <span class="section-label">Como funciona</span>
+      <h2 class="section-title">Simples como copiar e colar.</h2>
+      <p class="section-sub">Três passos e você já está vendendo com dados reais — não com intuição.</p>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">🔍</div>
+        <h3>Descubra quem está vendendo</h3>
+        <p>Acesse em tempo real os vídeos campeões do TikTok Shop Brasil e EUA com o faturamento estimado de cada um. Sem achismo — dados concretos.</p>
+        <div class="step-tags">
+          <span class="step-tag">Brasil + EUA</span>
+          <span class="step-tag">GMV em R$</span>
+          <span class="step-tag">Tempo real</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">🧠</div>
+        <h3>Entenda por que vendeu</h3>
+        <p>Nossa IA transcreve o vídeo e decompõe o roteiro em gancho, dor, solução e CTA. Você vê exatamente a fórmula que gerou vendas.</p>
+        <div class="step-tags">
+          <span class="step-tag">Transcrição IA</span>
+          <span class="step-tag">Gancho + CTA</span>
+          <span class="step-tag">Roteiro completo</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">🚀</div>
+        <h3>Modele e venda mais rápido</h3>
+        <p>Adapte o criativo validado para o seu produto, poste e veja os resultados. Economize semanas de teste com o que já está funcionando agora.</p>
+        <div class="step-tags">
+          <span class="step-tag">Sem testes</span>
+          <span class="step-tag">Banco de vídeos</span>
+          <span class="step-tag">Venda hoje</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES BENTO ── -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="features-header reveal">
+      <span class="section-label">Funcionalidades</span>
+      <h2 class="section-title">Tudo que você precisa<br>para dominar o TikTok Shop.</h2>
+    </div>
+
+    <div class="bento reveal">
+      <!-- Row 1 -->
+      <div class="bento-card col-8 accent-green">
+        <span class="bento-emoji">📊</span>
+        <h3>Feed de Vídeos Campeões</h3>
+        <p>Veja em tempo real os vídeos que mais vendem no TikTok Shop — com faturamento estimado, visualizações e categoria. Brasil e EUA numa única tela.</p>
+        <div class="mock-feed">
+          <div class="mock-item">
+            <div class="mock-thumb t1"></div>
+            <div class="mock-info">
+              <div class="mock-title">Sérum com Vitamina C</div>
+              <div class="mock-views">2.4M views · Beleza</div>
+            </div>
+            <div class="mock-earn">R$34.200</div>
+          </div>
+          <div class="mock-item">
+            <div class="mock-thumb t2"></div>
+            <div class="mock-info">
+              <div class="mock-title">Suplemento Colágeno</div>
+              <div class="mock-views">1.1M views · Saúde</div>
+            </div>
+            <div class="mock-earn">R$18.900</div>
+          </div>
+          <div class="mock-item">
+            <div class="mock-thumb t3"></div>
+            <div class="mock-info">
+              <div class="mock-title">Tênis Casual Moderno</div>
+              <div class="mock-views">780K views · Moda</div>
+            </div>
+            <div class="mock-earn">R$12.400</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bento-card col-4">
+        <span class="bento-emoji">🌎</span>
+        <h3>Brasil + EUA</h3>
+        <p>Uma assinatura, dois mercados. Descubra tendências americanas antes de chegarem ao Brasil e saia na frente.</p>
+        <div style="margin-top: 24px;">
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+            <span style="font-size:1.5rem">🇧🇷</span>
+            <div style="flex:1;height:6px;background:rgba(0,255,135,0.2);border-radius:3px;"><div style="width:72%;height:100%;background:var(--accent);border-radius:3px;"></div></div>
+            <span style="font-size:0.75rem;color:var(--muted)">72%</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <span style="font-size:1.5rem">🇺🇸</span>
+            <div style="flex:1;height:6px;background:rgba(0,201,255,0.15);border-radius:3px;"><div style="width:88%;height:100%;background:var(--accent2);border-radius:3px;"></div></div>
+            <span style="font-size:0.75rem;color:var(--muted)">88%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="bento-card col-5 accent-blue">
+        <span class="bento-emoji">🤖</span>
+        <h3>Transcrição + Insights com IA</h3>
+        <p>A IA decompõe cada vídeo campeão e revela a estrutura exata que fez ele vender.</p>
+        <div class="mock-transcript">
+          <div class="transcript-label">Análise da IA</div>
+          <div class="transcript-text">
+            <mark>🎣 Gancho:</mark> "Sua pele ressecada está te fazendo perder dinheiro..."<br>
+            <mark>💔 Dor:</mark> cansaço com produtos que prometem e não entregam<br>
+            <mark>✅ Solução:</mark> resultado visível em 7 dias ou dinheiro de volta<br>
+            <mark>📣 CTA:</mark> "Clica no link antes de acabar o estoque"
+          </div>
+        </div>
+      </div>
+
+      <div class="bento-card col-7">
+        <span class="bento-emoji">🎯</span>
+        <h3>Filtros Inteligentes</h3>
+        <p>Encontre exatamente o que você precisa: filtre por nicho, país, faixas de visualizações e volume de vendas. Zero ruído, só o que converte.</p>
+        <div style="margin-top:24px;display:flex;flex-wrap:wrap;gap:8px;">
+          <span style="background:rgba(0,255,135,0.1);border:1px solid rgba(0,255,135,0.25);color:var(--accent);padding:6px 14px;border-radius:6px;font-size:0.78rem;font-weight:600;">Beleza & Skincare</span>
+          <span style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:0.78rem;">Saúde</span>
+          <span style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:0.78rem;">Moda</span>
+          <span style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:0.78rem;">Casa</span>
+          <span style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:0.78rem;">Pet</span>
+          <span style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:0.78rem;">Tecnologia</span>
+          <span style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:0.78rem;">+12</span>
+        </div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="bento-card col-4">
+        <span class="bento-emoji">🔖</span>
+        <h3>Banco de Vídeos Pessoal</h3>
+        <p>Salve os melhores criativos e monte sua biblioteca de referências de alta conversão.</p>
+        <div class="bento-big-num" style="margin-top:20px;">∞</div>
+        <div style="font-size:0.78rem;color:var(--muted);">salvamentos no plano anual</div>
+      </div>
+
+      <div class="bento-card col-4 accent-red">
+        <span class="bento-emoji">⚡</span>
+        <h3>Atualização Contínua</h3>
+        <p>Nossa IA monitora 24h por dia. Novos vídeos campeões são detectados e adicionados automaticamente.</p>
+        <div class="bento-big-num" style="margin-top:20px;">24/7</div>
+        <div style="font-size:0.78rem;color:var(--muted);">monitoramento ativo</div>
+      </div>
+
+      <div class="bento-card col-4">
+        <span class="bento-emoji">📱</span>
+        <h3>Acessa em qualquer lugar</h3>
+        <p>Funciona no celular, tablet e computador — direto pelo navegador, sem instalar nada.</p>
+        <div style="display:flex;gap:8px;margin-top:20px;">
+          <span style="background:var(--surface2);border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:0.78rem;color:var(--muted);">📱 iOS</span>
+          <span style="background:var(--surface2);border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:0.78rem;color:var(--muted);">🤖 Android</span>
+          <span style="background:var(--surface2);border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:0.78rem;color:var(--muted);">💻 Web</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials">
+  <div class="testimonials-header container reveal">
+    <span class="section-label">Resultados reais</span>
+    <h2 class="section-title">O que creators estão<br>falando sobre a VANTX</h2>
+  </div>
+
+  <div class="testi-track">
+    <div class="testi-scroll" id="testi-scroll">
+      <!-- set 1 -->
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#ff6b9d,#c44dff)">LC</div>
+          <div>
+            <div class="testi-name">Luany Coutinho</div>
+            <div class="testi-handle">@luanycoutinho · TikTok</div>
+          </div>
+        </div>
+        <div class="testi-earn">🏆 R$9.200 em 7 dias</div>
+        <p class="testi-text">"Encontrei um vídeo campeão na VANTX, adaptei o roteiro pro meu produto de skincare e em menos de 2 dias já tinha vendas. É surreal ter acesso a essa informação."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00c9ff,#0052ff)">ML</div>
+          <div>
+            <div class="testi-name">Maria Luiza</div>
+            <div class="testi-handle">@marialuiza · TikTok Shop</div>
+          </div>
+        </div>
+        <div class="testi-earn">💰 R$2.000 no 1º mês</div>
+        <p class="testi-text">"Estava travada tentando criar roteiro do zero. Com a VANTX eu vejo o gancho que já funcionou e modelo. Meu mês virou completamente."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00ff87,#00c9ff)">AC</div>
+          <div>
+            <div class="testi-name">Ana Clara</div>
+            <div class="testi-handle">@anaclara · Creator</div>
+          </div>
+        </div>
+        <div class="testi-earn">⚡ Vendeu em menos de 1 dia</div>
+        <p class="testi-text">"Peguei um vídeo campeão, reescrevi pra minha linguagem e postei. Em 18h já tinha 4 vendas. A transcrição da IA é inacreditável."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f5c842,#ff6b35)">PB</div>
+          <div>
+            <div class="testi-name">Paolla</div>
+            <div class="testi-handle">@paollaborba · Live Commerce</div>
+          </div>
+        </div>
+        <div class="testi-earn">📡 Live recorde de conversão</div>
+        <p class="testi-text">"Usei os insights de vídeos campeões pra estruturar minha live e bati meu próprio recorde. A VANTX mudou como eu preparo cada transmissão."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#ff3d6b,#ff6b35)">IM</div>
+          <div>
+            <div class="testi-name">Isadora Martins</div>
+            <div class="testi-handle">@isadora · TikTok Shop</div>
+          </div>
+        </div>
+        <div class="testi-earn">📈 1 semana de resultados</div>
+        <p class="testi-text">"Sempre achei que precisava 'criar algo único'. A VANTX me mostrou que modelar o que já vende é estratégia, não preguiça. Resultado: semana melhor da minha carreira."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7b61ff,#4fc3f7)">AD</div>
+          <div>
+            <div class="testi-name">Adriano</div>
+            <div class="testi-handle">@adriano.shop · Afiliado</div>
+          </div>
+        </div>
+        <div class="testi-earn">🚀 R$15.000 em 30 dias</div>
+        <p class="testi-text">"Entrei no TikTok Shop sem experiência. Fui direto nos produtos campeões da VANTX, copiei a estrutura dos vídeos e em 1 mês já superava meu salário."</p>
+      </div>
+
+      <!-- set 2 (duplicate for infinite) -->
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#ff6b9d,#c44dff)">LC</div>
+          <div>
+            <div class="testi-name">Luany Coutinho</div>
+            <div class="testi-handle">@luanycoutinho · TikTok</div>
+          </div>
+        </div>
+        <div class="testi-earn">🏆 R$9.200 em 7 dias</div>
+        <p class="testi-text">"Encontrei um vídeo campeão na VANTX, adaptei o roteiro pro meu produto de skincare e em menos de 2 dias já tinha vendas. É surreal ter acesso a essa informação."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00c9ff,#0052ff)">ML</div>
+          <div>
+            <div class="testi-name">Maria Luiza</div>
+            <div class="testi-handle">@marialuiza · TikTok Shop</div>
+          </div>
+        </div>
+        <div class="testi-earn">💰 R$2.000 no 1º mês</div>
+        <p class="testi-text">"Estava travada tentando criar roteiro do zero. Com a VANTX eu vejo o gancho que já funcionou e modelo. Meu mês virou completamente."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00ff87,#00c9ff)">AC</div>
+          <div>
+            <div class="testi-name">Ana Clara</div>
+            <div class="testi-handle">@anaclara · Creator</div>
+          </div>
+        </div>
+        <div class="testi-earn">⚡ Vendeu em menos de 1 dia</div>
+        <p class="testi-text">"Peguei um vídeo campeão, reescrevi pra minha linguagem e postei. Em 18h já tinha 4 vendas. A transcrição da IA é inacreditável."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f5c842,#ff6b35)">PB</div>
+          <div>
+            <div class="testi-name">Paolla</div>
+            <div class="testi-handle">@paollaborba · Live Commerce</div>
+          </div>
+        </div>
+        <div class="testi-earn">📡 Live recorde de conversão</div>
+        <p class="testi-text">"Usei os insights de vídeos campeões pra estruturar minha live e bati meu próprio recorde. A VANTX mudou como eu preparo cada transmissão."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#ff3d6b,#ff6b35)">IM</div>
+          <div>
+            <div class="testi-name">Isadora Martins</div>
+            <div class="testi-handle">@isadora · TikTok Shop</div>
+          </div>
+        </div>
+        <div class="testi-earn">📈 1 semana de resultados</div>
+        <p class="testi-text">"Sempre achei que precisava 'criar algo único'. A VANTX me mostrou que modelar o que já vende é estratégia, não preguiça. Resultado: semana melhor da minha carreira."</p>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-header">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7b61ff,#4fc3f7)">AD</div>
+          <div>
+            <div class="testi-name">Adriano</div>
+            <div class="testi-handle">@adriano.shop · Afiliado</div>
+          </div>
+        </div>
+        <div class="testi-earn">🚀 R$15.000 em 30 dias</div>
+        <p class="testi-text">"Entrei no TikTok Shop sem experiência. Fui direto nos produtos campeões da VANTX, copiei a estrutura dos vídeos e em 1 mês já superava meu salário."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="pricing" id="planos">
+  <div class="container">
+    <div class="pricing-header reveal">
+      <span class="section-label">Planos</span>
+      <h2 class="section-title">Acesso que se paga<br>no primeiro vídeo.</h2>
+    </div>
+    <p class="pricing-sub reveal">Sem taxas escondidas. Cancele quando quiser. Garantia de 7 dias.</p>
+
+    <div class="pricing-toggle reveal">
+      <span class="toggle-label active" id="lbl-monthly">Mensal</span>
+      <div class="toggle-switch" id="billing-toggle">
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="toggle-label" id="lbl-annual">Anual</span>
+      <span class="save-badge">Economize 57%</span>
+    </div>
+
+    <div class="plans reveal">
+      <!-- Starter -->
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="price-monthly show">
+          <div class="plan-price">
+            <span class="plan-currency">R$</span>
+            <span class="plan-amount">29</span>
+          </div>
+          <div class="plan-note">/mês · cobrado mensalmente</div>
+        </div>
+        <div class="price-annual">
+          <div class="plan-original">R$348/ano</div>
+          <div class="plan-price">
+            <span class="plan-currency">R$</span>
+            <span class="plan-amount">19</span>
+          </div>
+          <div class="plan-note">/mês · cobrado R$228/ano à vista</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Vídeos campeões Brasil</li>
+          <li>Estimativa de GMV</li>
+          <li>20 transcrições/mês</li>
+          <li>10 insights com IA/mês</li>
+          <li>20 vídeos salvos</li>
+          <li class="disabled">EUA marketplace</li>
+          <li class="disabled">Filtros avançados</li>
+          <li class="disabled">Banco ilimitado</li>
+        </ul>
+        <a href="#" class="plan-cta outline">Começar com Starter</a>
+      </div>
+
+      <!-- Pro (featured) -->
+      <div class="plan-card featured">
+        <div class="plan-popular">⚡ Mais Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="price-monthly show">
+          <div class="plan-price">
+            <span class="plan-currency">R$</span>
+            <span class="plan-amount">49</span>
+          </div>
+          <div class="plan-note">/mês · cobrado mensalmente</div>
+        </div>
+        <div class="price-annual">
+          <div class="plan-original">R$588/ano</div>
+          <div class="plan-price">
+            <span class="plan-currency">R$</span>
+            <span class="plan-amount">33</span>
+          </div>
+          <div class="plan-note">/mês · cobrado R$397/ano à vista</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Vídeos campeões Brasil + EUA</li>
+          <li>GMV em R$ de cada vídeo</li>
+          <li>60 transcrições/mês</li>
+          <li>30 insights com IA/mês</li>
+          <li>50 vídeos salvos</li>
+          <li>Filtros por categoria e país</li>
+          <li>Produtos mais vendidos da semana</li>
+          <li class="disabled">Banco ilimitado</li>
+        </ul>
+        <a href="#" class="plan-cta solid">Começar com Pro →</a>
+      </div>
+
+      <!-- Elite -->
+      <div class="plan-card">
+        <div class="plan-name">Elite</div>
+        <div class="price-monthly show">
+          <div class="plan-price">
+            <span class="plan-currency">R$</span>
+            <span class="plan-amount">67</span>
+          </div>
+          <div class="plan-note">/mês · cobrado mensalmente</div>
+        </div>
+        <div class="price-annual">
+          <div class="plan-original">R$804/ano</div>
+          <div class="plan-price">
+            <span class="plan-currency">R$</span>
+            <span class="plan-amount">21</span>
+          </div>
+          <div class="plan-note">/mês · cobrado R$247/ano à vista</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Tudo do plano Pro</li>
+          <li>Transcrições ILIMITADAS</li>
+          <li>Insights ILIMITADOS com IA</li>
+          <li>Banco de vídeos ILIMITADO</li>
+          <li>Filtros avançados completos</li>
+          <li>Alertas de novos campeões</li>
+          <li>Acesso antecipado a novas funcionalidades</li>
+          <li>Suporte prioritário via WhatsApp</li>
+        </ul>
+        <a href="#" class="plan-cta outline">Começar com Elite</a>
+      </div>
+    </div>
+
+    <div class="guarantee reveal">
+      <div class="guarantee-badge">
+        <span>🛡️</span>
+        <span>Garantia incondicional de <strong>7 dias</strong> — 100% do dinheiro de volta, sem perguntas</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-header reveal">
+      <span class="section-label">Dúvidas</span>
+      <h2 class="section-title">Perguntas frequentes</h2>
+    </div>
+
+    <div class="faq-grid reveal">
+      <div class="faq-item">
+        <div class="faq-question">O que é a VANTX? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Uma plataforma de inteligência que mostra em tempo real quais vídeos e produtos vendem mais no TikTok Shop — com o faturamento estimado de cada um e a estrutura de roteiro que fez ele vender.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Funciona para iniciantes? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Sim. Você entra modelando vídeos que já estão vendendo hoje, sem passar meses testando. É justamente para quem está começando que a VANTX faz mais diferença.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Como recebo meu acesso? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Assim que o pagamento é confirmado, você recebe o login por e-mail com todas as instruções. O acesso é imediato e funciona em qualquer dispositivo.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Qual a diferença de olhar no TikTok? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">O TikTok só mostra visualizações. A VANTX mostra quem realmente vendeu, quanto faturou e o roteiro completo que usou para gerar essas vendas.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Posso cancelar quando quiser? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Sim, sem burocracia. E nos primeiros 7 dias você tem garantia total — pediu reembolso, devolvemos 100% sem perguntas.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">O preço muda na renovação? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Não. O valor que você assina hoje é o valor que fica nas próximas renovações, mesmo se os preços oficiais subirem.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="final-cta">
+  <div class="container">
+    <div class="reveal">
+      <h2>Pare de adivinhar.<br><em>Comece a vender.</em></h2>
+      <p>Seus concorrentes já sabem o que está vendendo hoje. E você?</p>
+      <a href="#planos" class="btn-primary" style="font-size:1.1rem;padding:20px 40px;">
+        ⚡ Quero ver o que está vendendo agora
+      </a>
+      <div style="margin-top:20px;font-size:0.82rem;color:var(--muted);">
+        Sem cartão necessário para testar • Garantia de 7 dias • Cancele quando quiser
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="nav-logo">VAN<span>TX</span></div>
+  <p>© 2026 VANTX. Todos os direitos reservados.</p>
+  <div class="footer-links">
+    <a href="#">Termos de Uso</a>
+    <a href="#">Privacidade</a>
+    <a href="#">Suporte</a>
+  </div>
+</footer>
+
+<script>
+  // ── Scroll reveal ──
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // ── FAQ accordion ──
+  document.querySelectorAll('.faq-question').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // ── Billing toggle ──
+  const toggle = document.getElementById('billing-toggle');
+  const lblMonthly = document.getElementById('lbl-monthly');
+  const lblAnnual = document.getElementById('lbl-annual');
+  let isAnnual = false;
+
+  toggle.addEventListener('click', () => {
+    isAnnual = !isAnnual;
+    toggle.classList.toggle('annual', isAnnual);
+    lblMonthly.classList.toggle('active', !isAnnual);
+    lblAnnual.classList.toggle('active', isAnnual);
+
+    document.querySelectorAll('.price-monthly').forEach(el => {
+      el.classList.toggle('show', !isAnnual);
+    });
+    document.querySelectorAll('.price-annual').forEach(el => {
+      el.classList.toggle('show', isAnnual);
+    });
+  });
+
+  // ── Nav active state on scroll ──
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 120) current = section.id;
+    });
+    navLinks.forEach(link => {
+      link.style.color = link.getAttribute('href') === `#${current}` ? 'var(--text)' : '';
+    });
+  });
+
+  // ── Hero parallax orbs ──
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    document.querySelector('.orb-1').style.transform = `translate(${x}px, ${y}px)`;
+    document.querySelector('.orb-2').style.transform = `translate(${-x}px, ${-y}px)`;
+  });
+</script>
+</body>
+</html>
